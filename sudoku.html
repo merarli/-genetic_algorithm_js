@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="jp" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+<body>
+
+  <script>
+  //個体数
+  individual = 10;
+  //遺伝子情報を格納する
+  gen = [];
+  var question = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9],
+  ];
+
+  // console.log(question);
+  //各行の足りない数字リストを表示する
+  var shortage = shortage(question);
+  generate(shortage,question);
+
+  function shortage(question){
+    //各行の足りない数字リスト
+    var shortage = [];
+    var tmp = [];
+    for (var i = 0; i < question.length; i++) {
+      // console.log(question[i]);
+      for (var y = 1; y < 10; y++) {
+        // console.log('1-9: ' + y);
+        if (question[i].indexOf(y) == -1){
+          // 存在しない
+          // console.log(i + '番目には' + y + 'が存在しない');
+          tmp.push(y);
+        }
+      }
+      shortage.push(tmp);
+      tmp = [];
+    }
+    console.log(shortage);
+    return shortage;
+  }
+
+  function generate(question){
+    for (var v = 0; v < individual; v++) {
+      console.log('個体' + v);
+      //ベースの問題を個体にコピー
+      gen[v] = question;
+    }
+
+    showGen();
+    // console.log('gen[1]: ' + gen[1]);
+    // console.log('gen[1].length: ' + gen[1].length);
+
+    // console.log('ランダムな取り出し' + shortage[1][Math.floor(Math.random() * shortage[1].length)]);
+
+    //配列の中身を消すのでループに入る前に別のところにいれる
+    var tmp_shortage = shortage;
+    for (var j = 0; j < tmp_shortage.length; j++) {
+
+      var loop = tmp_shortage[j].length;
+      for (var i = 0; i < loop; i++) {
+
+        console.log('消されたかチェック:' + tmp_shortage[j]);
+        //配列の中からランダムで１つ選ぶ
+        var random = tmp_shortage[j][Math.floor(Math.random() * tmp_shortage[j].length)];
+        // gen[][][] = random; 謎が深い
+
+        //一度ランダムで選ばれた値を配列から消す
+        var idx = tmp_shortage[j].indexOf(random);
+        if(idx >= 0){
+          tmp_shortage[j].splice(idx, 1);
+        }
+
+      }
+    }
+  }
+
+  function showGen(){
+    var strTmp = '';
+    for (var i = 0; i < gen.length; i++) {
+      console.log(i + '個目');
+      for (var j = 0; j < gen[i].length; j++) {
+        for (var g = 0; g < gen[i][j].length; g++) {
+
+          //列の状態表示
+          strTmp += gen[i][j][g];
+          if(gen[i][j][g] == 0){
+            console.log('gen[' + i +'][' + j + '][' + g + ']は0');
+
+          }
+
+        }
+        console.log('strTmp: ' + strTmp);
+        strTmp = '';
+      }
+    }
+  }
+  </script>
+</body>
+</html>
