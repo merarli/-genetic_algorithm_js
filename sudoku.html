@@ -8,10 +8,13 @@
 
   <script>
   //個体数
-  individual = 10;
+  individual = 3;
   //遺伝子情報を格納する
   gen = [];
-  var question = [
+
+  tmp_shortage = [];
+
+  question = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
     [6, 0, 0, 1, 9, 5, 0, 0, 0],
     [0, 9, 8, 0, 0, 0, 0, 6, 0],
@@ -23,12 +26,14 @@
     [0, 0, 0, 0, 8, 0, 0, 7, 9],
   ];
 
+
+
   // console.log(question);
   //各行の足りない数字リストを表示する
-  var shortage = shortage(question);
-  generate(shortage,question);
+  shortage = shortage();
+  generate();
 
-  function shortage(question){
+  function shortage(){
     //各行の足りない数字リスト
     var shortage = [];
     var tmp = [];
@@ -49,39 +54,95 @@
     return shortage;
   }
 
-  function generate(question){
-    for (var v = 0; v < individual; v++) {
-      console.log('個体' + v);
-      //ベースの問題を個体にコピー
-      gen[v] = question;
-    }
+  //遺伝子を作成
+  function generate(){
+    var tmp = ''
+    for (var i = 0; i < individual; i++) {
+      gen[i] = [];
+      for (var j = 0; j < question.length; j++) {
+        gen[i][j] = [];
+        for (var g = 0; g < question[j].length; g++) {
 
-    showGen();
-    // console.log('gen[1]: ' + gen[1]);
-    // console.log('gen[1].length: ' + gen[1].length);
+          gen[i][j][g] = question[j][g];
+          // console.log(question[j][g]);
+          tmp += question[j][g] + ',';
 
-    // console.log('ランダムな取り出し' + shortage[1][Math.floor(Math.random() * shortage[1].length)]);
-
-    //配列の中身を消すのでループに入る前に別のところにいれる
-    var tmp_shortage = shortage;
-    for (var j = 0; j < tmp_shortage.length; j++) {
-
-      var loop = tmp_shortage[j].length;
-      for (var i = 0; i < loop; i++) {
-
-        console.log('消されたかチェック:' + tmp_shortage[j]);
-        //配列の中からランダムで１つ選ぶ
-        var random = tmp_shortage[j][Math.floor(Math.random() * tmp_shortage[j].length)];
-        // gen[][][] = random; 謎が深い
-
-        //一度ランダムで選ばれた値を配列から消す
-        var idx = tmp_shortage[j].indexOf(random);
-        if(idx >= 0){
-          tmp_shortage[j].splice(idx, 1);
         }
-
+        console.log(tmp);
+        tmp = '';
       }
     }
+
+
+
+    console.log('初期コピー');
+    // gen[0][0][0] = 0;
+    showGen();
+
+    //ベース遺伝子情報をすべてfor
+    for (var geni = 0; geni < gen.length; geni++) {
+      //足りないものリストの初期化
+
+      for (var genj = 0; genj < gen[geni].length; genj++) {
+        // var tmp_shortage = initShortage();
+        //足りないものリストの初期化
+        var tmp_shortage = JSON.parse(JSON.stringify(shortage));
+        for (var geng = 0; geng < gen[geni][genj].length; geng++) {
+          // console.log('geng: ' + geng);
+
+
+          //遺伝子情報が0なら
+          // console.log('gen[geni][genj][geng]: ' + gen[geni][genj][geng]);
+          // console.log(geni + ',' + genj + ',' + geng + ': ' + gen[geni][genj][geng]);
+          if(gen[geni][genj][geng] == 0){
+            // console.log('0発見！');
+            //足りないものリストからランダムで数字を選ぶ
+            var random = tmp_shortage[genj][Math.floor(Math.random() * tmp_shortage[genj].length)];
+            // console.log(geni + ',' + genj + ',' + geng + ': ' + random);
+            //選ばれた数字で代入
+            gen[geni][genj][geng] = random;
+
+            console.log(0 + ',' + genj + ',' + geng + ': ' + gen[0][genj][geng]);
+            console.log(1 + ',' + genj + ',' + geng + ': ' + gen[1][genj][geng]);
+            console.log(2 + ',' + genj + ',' + geng + ': ' + gen[2][genj][geng]);
+
+            //一度ランダムで選ばれた値を配列から消す
+            var idx = tmp_shortage[genj].indexOf(random);
+            if(idx >= 0){
+              tmp_shortage[genj].splice(idx, 1);
+            }
+
+          }
+
+        }
+      }
+    }
+    console.log('書き換え遺伝子い表示');
+    showGen();
+
+
+
+
+
+    // var tmp_shortage = shortage;
+    // for (var j = 0; j < tmp_shortage.length; j++) {
+    //
+    //   var loop = tmp_shortage[j].length;
+    //   for (var i = 0; i < loop; i++) {
+    //
+    //     console.log('消されたかチェック:' + tmp_shortage[j]);
+    //     //配列の中からランダムで１つ選ぶ
+    //     var random = tmp_shortage[j][Math.floor(Math.random() * tmp_shortage[j].length)];
+    //     // gen[][][] = random; 謎が深い
+    //
+    //     //一度ランダムで選ばれた値を配列から消す
+    //     var idx = tmp_shortage[j].indexOf(random);
+    //     if(idx >= 0){
+    //       tmp_shortage[j].splice(idx, 1);
+    //     }
+    //
+    //   }
+    // }
   }
 
   function showGen(){
@@ -94,8 +155,7 @@
           //列の状態表示
           strTmp += gen[i][j][g];
           if(gen[i][j][g] == 0){
-            console.log('gen[' + i +'][' + j + '][' + g + ']は0');
-
+            // console.log('gen[' + i +'][' + j + '][' + g + ']は0');
           }
 
         }
@@ -104,6 +164,8 @@
       }
     }
   }
+
+
   </script>
 </body>
 </html>
