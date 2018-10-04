@@ -10,15 +10,19 @@
   //デフォルトポイント
   d_point = 0;
   //個体数
-  individual = 1000;
+  individual = 3;
   //遺伝子情報を格納する
   gen = [];
   //評価情報の保蔵
   eva_num = [];
+  //評価情報
   max_eva = 0;
   ave_eva = 0;
 
-  tmp_shortage = [];
+  // tmp_shortage = [];
+
+  //各遺伝子情報の足りないものリスト
+  gen_shortage = [];
 
   question = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -74,29 +78,23 @@
           tmp += question[j][g] + ',';
 
         }
-        console.log(tmp);
+        // console.log(tmp);
         tmp = '';
       }
     }
 
-
-
-    console.log('初期コピー');
+    console.log('初期コピー終了');
     // gen[0][0][0] = 0;
     // showGen();
-
+    var tmp_gen_shortage = [];
     //ベース遺伝子情報をすべてfor
     for (var geni = 0; geni < gen.length; geni++) {
-      //足りないものリストの初期化
-
+      gen_shortage[geni] = [];
       for (var genj = 0; genj < gen[geni].length; genj++) {
-        // var tmp_shortage = initShortage();
+        gen_shortage[geni][genj] = [];
         //足りないものリストの初期化
         var tmp_shortage = JSON.parse(JSON.stringify(shortage));
         for (var geng = 0; geng < gen[geni][genj].length; geng++) {
-          // console.log('geng: ' + geng);
-
-
           //遺伝子情報が0なら
           // console.log('gen[geni][genj][geng]: ' + gen[geni][genj][geng]);
           // console.log(geni + ',' + genj + ',' + geng + ': ' + gen[geni][genj][geng]);
@@ -108,22 +106,29 @@
             //選ばれた数字で代入
             gen[geni][genj][geng] = random;
 
-            // console.log(0 + ',' + genj + ',' + geng + ': ' + gen[0][genj][geng]);
-            // console.log(1 + ',' + genj + ',' + geng + ': ' + gen[1][genj][geng]);
-            // console.log(2 + ',' + genj + ',' + geng + ': ' + gen[2][genj][geng]);
+            tmp_gen_shortage.push(random);
+
 
             //一度ランダムで選ばれた値を配列から消す
             var idx = tmp_shortage[genj].indexOf(random);
             if(idx >= 0){
               tmp_shortage[genj].splice(idx, 1);
             }
-
           }
-
         }
+
+        gen_shortage[geni][genj].push(tmp_gen_shortage);
+        tmp_gen_shortage = [];
+
+        // console.log('tmp_gen_shortage: ' + tmp_gen_shortage);
+        // gen_shortage[i].push(tmp_gen_shortage);
+        // tmp_gen_shortage = [];
+        // console.log('gen_shortage[i].length: ' + gen_shortage[i][j].length);
+        console.log('gen_shortage['+geni+']['+genj+']: ' + gen_shortage[geni][genj]);
       }
+
     }
-    console.log('書き換え遺伝子い表示');
+    console.log('書き換え後遺伝子表示');
     showGen();
 
   }
@@ -132,6 +137,7 @@
     var strTmp = '';
     for (var i = 0; i < gen.length; i++) {
       console.log(i + '個目');
+      console.log('gen_shortage[i]: ' + gen_shortage[i]);
       eva(i,gen[i]);
       showGenInfo();
       for (var j = 0; j < gen[i].length; j++) {
@@ -144,7 +150,7 @@
           }
 
         }
-        console.log('strTmp: ' + strTmp);
+        console.log(strTmp);
         strTmp = '';
       }
     }
@@ -204,7 +210,7 @@
         }
 
       }
-      console.log('sikaku_count: ' + sikaku_count);
+      // console.log('sikaku_count: ' + sikaku_count);
     }
 
     point = point - count;
@@ -215,10 +221,24 @@
   //遺伝子の詳細情報を表示
   function showGenInfo(){
     max_eva = Math.max.apply(null,eva_num);
-    console.log('最大評価: ' + max_eva);
+    console.log('最大評価: ' + max_eva + ' :gen[' + + ']');
 
     // ave_eva = Math.ave.apply(null,eva_num);
     // console.log('平均評価: ' + max_eva);
+  }
+
+  function showGenShortage(){
+    var tmp_str = '';
+    for (var i = 0; i < gen_shortage.length; i++) {
+      console.log(i + '個目');
+      for (var j = 0; j < gen_shortage[i].length; j++) {
+        for (var g = 0; g < gen_shortage[i][j].length; g++) {
+          tmp_str = tmp_str + gen_shortage[i][j][g] + ',';
+        }
+        console.log(tmp_str);
+        tmp_str = '';
+      }
+    }
   }
   </script>
 </body>
