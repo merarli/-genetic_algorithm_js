@@ -10,7 +10,7 @@
   //デフォルトポイント
   d_point = 0;
   //個体数
-  individual = 3;
+  individual = 1000;
   //遺伝子情報を格納する
   gen = [];
   //評価情報の保蔵
@@ -138,7 +138,7 @@
     for (var i = 0; i < gen.length; i++) {
       console.log(i + '個目');
       console.log('gen_shortage[i]: ' + gen_shortage[i]);
-      eva(i,gen[i]);
+      eva(gen[i],i);
       showGenInfo();
       for (var j = 0; j < gen[i].length; j++) {
         for (var g = 0; g < gen[i][j].length; g++) {
@@ -156,7 +156,7 @@
     }
   }
   //評価関数
-  function eva(num,gen){
+  function eva(gen,num){
     //数字がかぶった数をカウント
     var count = 0;
     var tate = [];
@@ -220,8 +220,18 @@
 
   //遺伝子の詳細情報を表示
   function showGenInfo(){
-    max_eva = Math.max.apply(null,eva_num);
-    console.log('最大評価: ' + max_eva + ' :gen[' + + ']');
+    // max_eva = Math.max.apply(null,eva_num);
+
+    var max = -1000;
+    var index = 0;
+    for (var i = 0; i < eva_num.length; i++) {
+      if (eva_num[i] > max) {
+        max = eva_num[i]
+        index = i;
+      }
+    }
+    max_eva = max;
+    console.log('最大評価: ' + max_eva + ' :gen[' + index + ']');
 
     // ave_eva = Math.ave.apply(null,eva_num);
     // console.log('平均評価: ' + max_eva);
